@@ -5,7 +5,7 @@
 ;; Author: Scott Runnels <srunnels@gmail.com>
 ;; URL: https://github.com/srunnels/dotfiles
 ;; Version: 0.0.0
-;; Package-Requires: ((emacs "30.1") (s "1.13.0") ())
+;; Package-Requires: ((emacs "30.1") (s "1.13.0"))
 
 
 ;;; Commentary:
