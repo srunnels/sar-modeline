@@ -5,7 +5,7 @@
 ;; Author: Scott Runnels <srunnels@gmail.com>
 ;; URL: https://github.com/srunnels/dotfiles
 ;; Version: 0.0.0
-;; Package-Requires: ((emacs "30.1") (s "1.13.0"))
+;; Package-Requires: ((emacs "30.1") (s "1.13.0") ())
 
 
 ;;; Commentary:
@@ -13,6 +13,7 @@
 ;;; Code:
 
 (require 's)
+(require 'flymake)
 
 (defgroup sar-modeline nil
   "Custom modeline."
@@ -143,6 +144,11 @@ Returns an indicator only on the active window."
   '((t :inherit mode-line-buffer-id))
   ".")
 
+(defface sar-modeline-buffer-name-face-diminished
+  '((t :inherit mode-line-buffer-id-deemph))
+  "."
+  )
+
 (defun sar-modeline--major-mode-indicator ()
   "Return the major mode as an icon and the buffer name.
 
@@ -161,7 +167,9 @@ buffer name."
                         'face
                         (if (buffer-modified-p)
                             'sar-modeline-buffer-name-modified-face
-                          'sar-modeline-buffer-name-face
+			  (if (mode-line-window-selected-p)
+                              'sar-modeline-buffer-name-face
+			    'sar-modeline-buffer-name-face-diminished)
                           )))))
 
 
