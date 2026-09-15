@@ -154,12 +154,6 @@ Returns an indicator only on the active window."
   "."
   )
 
-(defun my-modeline-file-icon ()
-  "Return the nerd-icon for the current buffer's file, properly padded."
-  (if-let ((file (buffer-file-name)))
-      (concat (nerd-icons-icon-for-file file) " ")
-    ""))
-
 ;; Inject it into your custom mode-line format
 (setq-default mode-line-format
               '("%e"
@@ -176,7 +170,7 @@ Attempts to match an icon for a for the major mode or the
 derived-mode before falling back to a default.  Appends the
 buffer name."
   (let ((indicator (or
-                    (nerd-icons-icon-for-mode (symbol-name major-mode))
+                    (car (nerd-icons-icon-for-mode major-mode))
                     (sar-modeline-get-mode-icon (symbol-name major-mode))
                     (cond
                      ((derived-mode-p 'text-mode) "§")
