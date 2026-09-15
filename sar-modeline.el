@@ -5,8 +5,7 @@
 ;; Author: Scott Runnels <srunnels@gmail.com>
 ;; URL: https://github.com/srunnels/dotfiles
 ;; Version: 0.0.0
-;; Package-Requires: ((emacs "30.1") (s "1.13.0"))
-
+;; Package-Requires: ((emacs "30.1") (s "1.13.0") (nerd-icons "20260823.17"))
 
 ;;; Commentary:
 
@@ -14,6 +13,7 @@
 
 (require 's)
 (require 'flymake)
+(require 'nerd-icons)
 
 (defgroup sar-modeline nil
   "Custom modeline."
@@ -79,7 +79,12 @@ the system as an icon and the branch."
 
 ;;;;; Major Mode and Buffer Name Indication
 (defvar sar-modeline-mode-icon-map
-  '(("org-mode" . "")
+  '(("org-mode" . "") ;;
+    ("go-ts-mode" . "")
+    ("go-mode" . "") ;;
+    ("markdown-mode" . "")
+    ("go-mode" . "")
+    ("go-mode" . "")
     ("python-ts-mode" . "")
     ("fundamental-mode" . "λ")
     )
@@ -149,27 +154,44 @@ Returns an indicator only on the active window."
   "."
   )
 
+(defun my-modeline-file-icon ()
+  "Return the nerd-icon for the current buffer's file, properly padded."
+  (if-let ((file (buffer-file-name)))
+      (concat (nerd-icons-icon-for-file file) " ")
+    ""))
+
+;; Inject it into your custom mode-line format
+(setq-default mode-line-format
+              '("%e"
+                (:eval (my-modeline-file-icon)) ; Adds the icon dynamically
+                mode-line-buffer-identification
+                " "
+                ;; ... the rest of your mode-line components
+                ))
+
 (defun sar-modeline--major-mode-indicator ()
   "Return the major mode as an icon and the buffer name.
 
 Attempts to match an icon for a for the major mode or the
 derived-mode before falling back to a default.  Appends the
 buffer name."
-  (let ((indicator (or (sar-modeline-get-mode-icon (symbol-name major-mode))
-                       (cond
-                         ((derived-mode-p 'text-mode) "§")
-                         ((derived-mode-p 'prog-mode) "λ")
-                         ((derived-mode-p 'comint-mode) ">_")
-                         (t "◦")))))
+  (let ((indicator (or
+                    (nerd-icons-icon-for-mode (symbol-name major-mode))
+                    (sar-modeline-get-mode-icon (symbol-name major-mode))
+                    (cond
+                     ((derived-mode-p 'text-mode) "§")
+                     ((derived-mode-p 'prog-mode) "λ")
+                     ((derived-mode-p 'comint-mode) ">_")
+                     (t "◦")))))
     (concat (propertize indicator 'face 'shadow)
             " "
             (propertize " %b "
                         'face
                         (if (buffer-modified-p)
                             'sar-modeline-buffer-name-modified-face
-			  (if (mode-line-window-selected-p)
+			              (if (mode-line-window-selected-p)
                               'sar-modeline-buffer-name-face
-			    'sar-modeline-buffer-name-face-diminished)
+			                'sar-modeline-buffer-name-face-diminished)
                           )))))
 
 
